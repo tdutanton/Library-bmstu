@@ -1,4 +1,4 @@
-package Library.Domain.TextEntity;
+package Library.Model.Domain.TextEntity;
 
 public class Author extends TextEntity {
 
@@ -8,7 +8,7 @@ public class Author extends TextEntity {
 
   @Override
   protected void CheckText() {
-    if (this.name == null || this.name.isEmpty()) {
+    if (this.text == null || this.text.isEmpty()) {
       throw new IllegalArgumentException("Поле Автора не может быть пустым");
     }
   }

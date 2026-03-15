@@ -1,6 +1,6 @@
-package Library.Domain.ReadableEntity;
+package Library.Model.Domain.ReadableEntity;
 
-import Library.Domain.TextEntity.TextEntity;
+import Library.Model.Domain.TextEntity.TextEntity;
 import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,6 @@ public class Book implements ReadableEntity {
   private final LocalDateTime createdAt;
 
   public String getAuthor() {
-    return author.getName();
+    return author.getText();
   }
 }

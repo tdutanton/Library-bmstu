@@ -1,15 +1,15 @@
-package Library.Domain.TextEntity;
+package Library.Model.Domain.TextEntity;
 
 import lombok.Getter;
 
 public abstract class TextEntity {
 
   @Getter
-  protected final String name;
+  protected final String text;
 
   public TextEntity(String name) {
     CheckText();
-    this.name = name;
+    this.text = name;
   }
 
   protected abstract void CheckText();
