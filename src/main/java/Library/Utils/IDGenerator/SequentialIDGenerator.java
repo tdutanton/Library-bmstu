@@ -3,7 +3,7 @@ package Library.Utils.IDGenerator;
 public class SequentialIDGenerator implements IDGenerator {
 
   private final String prefix;
-  private long currentId = 1;
+  private Integer currentId = 1;
 
   public SequentialIDGenerator(String prefix) {
     if (prefix == null || prefix.trim().isEmpty()) {
@@ -18,7 +18,7 @@ public class SequentialIDGenerator implements IDGenerator {
   }
 
   @Override
-  public synchronized long nextNumberId() {
+  public synchronized Integer nextNumberId() {
     return currentId++;
   }
 }

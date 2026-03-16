@@ -4,5 +4,5 @@ public interface IDGenerator {
 
   String nextId();
 
-  long nextNumberId();
+  Integer nextNumberId();
 }

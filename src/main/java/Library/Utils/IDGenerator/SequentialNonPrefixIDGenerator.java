@@ -1,8 +1,13 @@
 package Library.Utils.IDGenerator;
 
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
+
+@Component
+@Primary
 public class SequentialNonPrefixIDGenerator implements IDGenerator {
 
-  private long currentId = 1;
+  private Integer currentId = 1;
 
   @Override
   public synchronized String nextId() {
@@ -12,7 +17,7 @@ public class SequentialNonPrefixIDGenerator implements IDGenerator {
   }
 
   @Override
-  public synchronized long nextNumberId() {
+  public synchronized Integer nextNumberId() {
     return currentId++;
   }
 }

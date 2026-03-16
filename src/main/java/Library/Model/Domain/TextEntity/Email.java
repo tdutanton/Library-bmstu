@@ -7,8 +7,8 @@ public class Email extends TextEntity {
   }
 
   @Override
-  protected void CheckText() {
-    if (this.text == null || this.text.isEmpty()) {
+  protected void CheckText(String value) {
+    if (value == null || value.trim().isEmpty()) {
       throw new IllegalArgumentException("Поле E-Mail не может быть пустым");
     }
   }

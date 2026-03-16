@@ -1,4 +1,4 @@
-package Library.Repository;
+package Library.Repository.LibraryRepository;
 
 import Library.Model.Domain.ReadableEntity.ReadableEntity;
 import Library.Model.Domain.Reader.Reader;
@@ -6,11 +6,17 @@ import java.util.Optional;
 
 public interface LibraryRepository {
 
-  void createReader(Reader reader);
+  Integer createReader(Reader reader);
 
-  void createReadableEntity(ReadableEntity entity);
+  Integer createReadableEntity(ReadableEntity entity);
 
   Optional<Reader> findReaderById(Integer id);
 
   Optional<ReadableEntity> findReadableEntityByName(String name);
+
+  boolean readerExistsById(Integer id);
+
+  boolean readableEntityExistsById(Integer id);
+
+  boolean readerExistsByName(String name);
 }

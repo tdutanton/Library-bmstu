@@ -8,9 +8,9 @@ public abstract class TextEntity {
   protected final String text;
 
   public TextEntity(String name) {
-    CheckText();
+    CheckText(name);
     this.text = name;
   }
 
-  protected abstract void CheckText();
+  protected abstract void CheckText(String value);
 }

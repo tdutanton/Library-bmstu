@@ -14,7 +14,13 @@ public class Book implements ReadableEntity {
   private final TextEntity author;
   private final LocalDateTime createdAt;
 
+  @Override
   public String getAuthor() {
     return author.getText();
+  }
+
+  @Override
+  public String getName() {
+    return name.getText();
   }
 }
