@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -21,6 +22,7 @@ public class PsqlRepository implements LibraryRepository {
 
   private final ReaderFactory readerFactory;
   private final ReadableEntityFactory readableEntityFactory;
+  private final JdbcTemplate jdbcTemplate;
 
   private final RowMapper<Reader> readerRowMapper = (ResultSet rs, int rowNum) -> {
     Integer id = rs.getInt("id");
@@ -46,8 +48,31 @@ public class PsqlRepository implements LibraryRepository {
     return readableEntityFactory.createReadableEntity(param);
   };
 
-  @Autowired
-  private JdbcTemplate jdbcTemplate;
+  public boolean readerExistsById(Integer id) {
+    if (id == null) {
+      return false;
+    }
+    String sql = "SELECT 1 FROM readers WHERE id = ? LIMIT 1";
+    try {
+      jdbcTemplate.queryForObject(sql, Integer.class, id);
+      return true;
+    } catch (EmptyResultDataAccessException e) {
+      return false;
+    }
+  }
+
+  public boolean readableEntityExistsById(Integer id) {
+    if (id == null) {
+      return false;
+    }
+    String sql = "SELECT 1 FROM books WHERE id = ? LIMIT 1";
+    try {
+      jdbcTemplate.queryForObject(sql, Integer.class, id);
+      return true;
+    } catch (EmptyResultDataAccessException e) {
+      return false;
+    }
+  }
 
   @Override
   public void createReader(Reader reader) {
@@ -78,17 +103,17 @@ public class PsqlRepository implements LibraryRepository {
     try {
       Reader reader = jdbcTemplate.queryForObject(sql, readerRowMapper, id);
       return Optional.ofNullable(reader);
-    } catch (Exception e) {
+    } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
 
   public Optional<ReadableEntity> findReadableEntityByName(String name) {
-    String sql = "SELECT * FROM books WHERE id = ?";
+    String sql = "SELECT * FROM books WHERE name = ?";
     try {
       ReadableEntity entity = jdbcTemplate.queryForObject(sql, bookRowMapper, name);
       return Optional.ofNullable(entity);
-    } catch (Exception e) {
+    } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
