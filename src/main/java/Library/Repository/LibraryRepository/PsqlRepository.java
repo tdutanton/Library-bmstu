@@ -8,6 +8,7 @@ import Library.Model.Factory.ReaderFactory.ReaderFactory;
 import Library.Model.Factory.ReaderFactory.ReaderParam;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -49,6 +50,7 @@ public class PsqlRepository implements LibraryRepository {
     };
   }
 
+  @Override
   public boolean readerExistsById(Integer id) {
     if (id == null) {
       return false;
@@ -62,11 +64,12 @@ public class PsqlRepository implements LibraryRepository {
     }
   }
 
+  @Override
   public boolean readerExistsByName(String name) {
     if (name == null) {
       return false;
     }
-    String sql = "SELECT 1 FROM readers WHERE name = ? LIMIT 1";
+    String sql = "SELECT 1 FROM readers WHERE LOWER(name) = LOWER(?) LIMIT 1";
     try {
       jdbcTemplate.queryForObject(sql, String.class, name);
       return true;
@@ -75,6 +78,7 @@ public class PsqlRepository implements LibraryRepository {
     }
   }
 
+  @Override
   public boolean readableEntityExistsById(Integer id) {
     if (id == null) {
       return false;
@@ -82,6 +86,20 @@ public class PsqlRepository implements LibraryRepository {
     String sql = "SELECT 1 FROM books WHERE id = ? LIMIT 1";
     try {
       jdbcTemplate.queryForObject(sql, Integer.class, id);
+      return true;
+    } catch (EmptyResultDataAccessException e) {
+      return false;
+    }
+  }
+
+  @Override
+  public boolean readableEntityExistsByName(String name) {
+    if (name == null) {
+      return false;
+    }
+    String sql = "SELECT 1 FROM books WHERE LOWER(name) = LOWER(?) LIMIT 1";
+    try {
+      jdbcTemplate.queryForObject(sql, String.class, name);
       return true;
     } catch (EmptyResultDataAccessException e) {
       return false;
@@ -110,8 +128,37 @@ public class PsqlRepository implements LibraryRepository {
     );
   }
 
+  @Override
+  public Integer giveREntityToReader(String readerName, String rEntityName,
+      LocalDateTime borrowed, LocalDateTime dueDate) {
+    String sql = """
+        INSERT INTO borrowings (reader_id, book_id, borrowed_at, due_date)
+        SELECT r.id, b.id, ?, ?
+        FROM readers r
+        JOIN books b ON LOWER(b.name) = LOWER(?)
+        WHERE LOWER(r.name) = LOWER(?)
+        RETURNING id
+        """;
+    try {
+      return jdbcTemplate.queryForObject(sql, Integer.class,
+          borrowed, dueDate, readerName, rEntityName);
+    } catch (EmptyResultDataAccessException e) {
+      boolean readerExists = readerExistsByName(readerName);
+      boolean bookExists = readableEntityExistsByName(rEntityName);
+      if (!readerExists && !bookExists) {
+        throw new IllegalArgumentException(
+            "Не найдены ни читатель '" + readerName + "', ни книга '" + rEntityName + "'");
+      } else if (!readerExists) {
+        throw new IllegalArgumentException("Читатель не найден: " + readerName);
+      } else {
+        throw new IllegalArgumentException("Книга не найдена: " + rEntityName);
+      }
+    }
+  }
+
+  @Override
   public Optional<Reader> findReaderById(Integer id) {
-    String sql = "SELECT * FROM readers WHERE id = ?";
+    String sql = "SELECT * FROM readers WHERE id = ? LIMIT 1";
     try {
       Reader reader = jdbcTemplate.queryForObject(sql, readerRowMapper(), id);
       return Optional.ofNullable(reader);
@@ -120,13 +167,26 @@ public class PsqlRepository implements LibraryRepository {
     }
   }
 
+  @Override
   public Optional<ReadableEntity> findReadableEntityByName(String name) {
-    String sql = "SELECT * FROM books WHERE name = ?";
+    String sql = "SELECT * FROM books WHERE LOWER(name) = LOWER(?) LIMIT 1";
     try {
       ReadableEntity entity = jdbcTemplate.queryForObject(sql, bookRowMapper(), name);
       return Optional.ofNullable(entity);
     } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
+  }
+
+  @Override
+  public List<Reader> getReaders() {
+    String sql = "SELECT * from readers";
+    return jdbcTemplate.query(sql, readerRowMapper());
+  }
+
+  @Override
+  public List<ReadableEntity> getReadableEntities() {
+    String sql = "SELECT * from books";
+    return jdbcTemplate.query(sql, bookRowMapper());
   }
 }

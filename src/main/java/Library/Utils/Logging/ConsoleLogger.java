@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public final class ConsoleLogger implements Logger {
 
-  private static boolean logging = true;
+  private static boolean logging = false;
 
   public void setLogMode(boolean state) {
     logging = state;

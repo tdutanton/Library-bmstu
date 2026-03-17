@@ -2,6 +2,8 @@ package Library.Repository.LibraryRepository;
 
 import Library.Model.Domain.ReadableEntity.ReadableEntity;
 import Library.Model.Domain.Reader.Reader;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface LibraryRepository {
@@ -19,4 +21,13 @@ public interface LibraryRepository {
   boolean readableEntityExistsById(Integer id);
 
   boolean readerExistsByName(String name);
+
+  List<Reader> getReaders();
+
+  boolean readableEntityExistsByName(String name);
+
+  List<ReadableEntity> getReadableEntities();
+
+  Integer giveREntityToReader(String readerName, String rEntityName,
+      LocalDateTime borrowed, LocalDateTime dueDate);
 }

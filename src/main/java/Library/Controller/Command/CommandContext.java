@@ -1,19 +1,24 @@
 package Library.Controller.Command;
 
 import Library.Service.GeneralService.GeneralService;
-import Library.Utils.Logging.Logger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Optional;
 import java.util.Scanner;
 
 public record CommandContext(
     GeneralService service,
-    Logger logger,
     Scanner scanner
 ) {
 
+  private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
   public int getIntInput(String prompt) {
-    logger.info(prompt);
+    System.out.println(prompt);
     while (!scanner.hasNextInt()) {
-      logger.info("Пожалуйста, введите число: ");
+      System.out.println("Пожалуйста, введите число: ");
       scanner.next();
     }
     int value = scanner.nextInt();
@@ -22,9 +27,9 @@ public record CommandContext(
   }
 
   public long getLongInput(String prompt) {
-    logger.info(prompt);
+    System.out.println(prompt);
     while (!scanner.hasNextLong()) {
-      logger.info("Пожалуйста, введите корректную сумму: ");
+      System.out.println("Пожалуйста, введите корректную сумму: ");
       scanner.next();
     }
     long value = scanner.nextLong();
@@ -33,7 +38,25 @@ public record CommandContext(
   }
 
   public String getStringInput(String prompt) {
-    logger.info(prompt);
+    System.out.println(prompt);
     return scanner.nextLine().trim();
+  }
+
+  public Optional<LocalDateTime> getDateInput(String prompt) {
+    System.out.print(prompt);
+    System.out.println("(формат: дд.мм.гггг или Enter для пропуска)");
+    while (true) {
+      String input = scanner.nextLine().trim();
+      if (input.isEmpty()) {
+        return Optional.empty();
+      }
+      try {
+        LocalDate date = LocalDate.parse(input, DATE_FORMATTER);
+        return Optional.of(date.atStartOfDay());
+      } catch (DateTimeParseException e) {
+        System.out.print(
+            "Неверный формат. Пожалуйста, введите дату в формате дд.мм.гггг или Enter для пропуска: ");
+      }
+    }
   }
 }
