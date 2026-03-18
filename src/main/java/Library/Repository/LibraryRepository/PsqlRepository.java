@@ -29,8 +29,9 @@ public class PsqlRepository implements LibraryRepository {
       Integer id = rs.getInt("id");
       String name = rs.getString("name");
       String author = rs.getString("author");
-      LocalDateTime dt = rs.getTimestamp("created_at") != null ?
-          rs.getTimestamp("created_at").toLocalDateTime() : null;
+      LocalDateTime dt =
+          rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at").toLocalDateTime()
+              : null;
 
       ReadableEntityParam param = new ReadableEntityParam(id, name, author, dt);
       return readableEntityFactory.createReadableEntity(param);
@@ -42,8 +43,9 @@ public class PsqlRepository implements LibraryRepository {
       Integer id = rs.getInt("id");
       String name = rs.getString("name");
       String email = rs.getString("email");
-      LocalDateTime dt = rs.getTimestamp("created_at") != null ?
-          rs.getTimestamp("created_at").toLocalDateTime() : null;
+      LocalDateTime dt =
+          rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at").toLocalDateTime()
+              : null;
 
       ReaderParam param = new ReaderParam(id, name, email, dt);
       return readerFactory.createReader(param);
@@ -110,38 +112,32 @@ public class PsqlRepository implements LibraryRepository {
   public Integer createReader(Reader reader) {
     String sql = "INSERT INTO readers (name, email, created_at) VALUES (?, ?, ?) RETURNING id";
 
-    return jdbcTemplate.queryForObject(sql, Integer.class,
-        reader.getName(),
-        reader.getEmail(),
-        reader.getCreatedAt()
-    );
+    return jdbcTemplate.queryForObject(sql, Integer.class, reader.getName(), reader.getEmail(),
+        reader.getCreatedAt());
   }
 
   @Override
   public Integer createReadableEntity(ReadableEntity entity) {
     String sql = "INSERT INTO books (name, author, created_at) VALUES (?, ?, ?) RETURNING id";
 
-    return jdbcTemplate.queryForObject(sql, Integer.class,
-        entity.getName(),
-        entity.getAuthor(),
-        entity.getCreatedAt()
-    );
+    return jdbcTemplate.queryForObject(sql, Integer.class, entity.getName(), entity.getAuthor(),
+        entity.getCreatedAt());
   }
 
   @Override
-  public Integer giveREntityToReader(String readerName, String rEntityName,
-      LocalDateTime borrowed, LocalDateTime dueDate) {
+  public Integer giveREntityToReader(String readerName, String rEntityName, LocalDateTime borrowed,
+      LocalDateTime dueDate) {
     String sql = """
-        INSERT INTO borrowings (reader_id, book_id, borrowed_at, due_date)
+        INSERT INTO borrowings br (reader_id, book_id, borrowed_at, due_date)
         SELECT r.id, b.id, ?, ?
         FROM readers r
         JOIN books b ON LOWER(b.name) = LOWER(?)
         WHERE LOWER(r.name) = LOWER(?)
-        RETURNING id
+        RETURNING br.id
         """;
     try {
-      return jdbcTemplate.queryForObject(sql, Integer.class,
-          borrowed, dueDate, readerName, rEntityName);
+      return jdbcTemplate.queryForObject(sql, Integer.class, borrowed, dueDate, rEntityName,
+          readerName);
     } catch (EmptyResultDataAccessException e) {
       boolean readerExists = readerExistsByName(readerName);
       boolean bookExists = readableEntityExistsByName(rEntityName);
@@ -154,6 +150,81 @@ public class PsqlRepository implements LibraryRepository {
         throw new IllegalArgumentException("Книга не найдена: " + rEntityName);
       }
     }
+  }
+
+  @Override
+  public Integer returnREntity(String readerName, String rEntityName, LocalDateTime returned) {
+    String sql = """
+        UPDATE borrowings br
+        SET returned_at = ?
+        FROM readers r, books b
+        WHERE br.reader_id = r.id
+          AND br.book_id = b.id
+          AND br.returned_at IS NULL
+          AND LOWER(r.name) = LOWER(?)
+          AND LOWER(b.name) = LOWER(?)
+        RETURNING br.id
+        """;
+    try {
+      return jdbcTemplate.queryForObject(sql, Integer.class, returned, readerName, rEntityName);
+    } catch (EmptyResultDataAccessException e) {
+      boolean readerExists = readerExistsByName(readerName);
+      boolean bookExists = readableEntityExistsByName(rEntityName);
+      if (!readerExists && !bookExists) {
+        throw new IllegalArgumentException(
+            "Не найдены ни читатель '" + readerName + "', ни книга '" + rEntityName + "'");
+      } else if (!readerExists) {
+        throw new IllegalArgumentException("Читатель не найден: " + readerName);
+      } else if (!bookExists) {
+        throw new IllegalArgumentException("Книга не найдена: " + rEntityName);
+      } else {
+        throw new IllegalArgumentException(
+            "Активная выдача не найдена для читателя '" + readerName + "' и книги '" + rEntityName
+                + "'");
+      }
+    }
+  }
+
+  @Override
+  public List<ReadableEntity> getBorrowedByReader(String name) {
+    String sql = """
+        SELECT * FROM books b
+        JOIN borrowings br ON b.id = br.book_id
+        JOIN readers r ON br.reader_id = r.id
+        WHERE LOWER(r.name) = LOWER(?)
+        AND br.returned_at IS NULL
+        """;
+    return jdbcTemplate.query(sql, bookRowMapper(), name);
+  }
+
+  @Override
+  public List<String[]> getTopReadableEntities() {
+    String sql = """
+        SELECT
+            b.name,
+            COUNT(br.id) AS borrow_count
+        FROM books b
+        JOIN borrowings br ON b.id = br.book_id
+        GROUP BY b.id, b.name, b.author, b.created_at
+        ORDER BY borrow_count DESC
+        LIMIT 10
+        """;
+    return jdbcTemplate.query(sql, (rs, rowNum) -> new String[]{rs.getString("name"),
+        String.valueOf(rs.getInt("borrow_count"))});
+  }
+
+  @Override
+  public List<String[]> getBorrowedRE() {
+    String sql = """
+        SELECT b.name AS book_name,
+            r.name AS reader_name
+        FROM books b
+        JOIN borrowings br ON b.id = br.book_id
+        JOIN readers r ON br.reader_id = r.id
+        WHERE br.returned_at IS NULL
+        """;
+    return jdbcTemplate.query(sql,
+        (rs, rowNum) -> new String[]{rs.getString("book_name"), rs.getString("reader_name")});
   }
 
   @Override

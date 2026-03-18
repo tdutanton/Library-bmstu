@@ -13,20 +13,32 @@ public class GiveREntityCommand extends BaseCommand {
 
   @Override
   public void execute() {
-    String name = ctx.getStringInput("Введите название книги для выдачи: ").toLowerCase();
-    if (name.isEmpty()) {
+    String bookName = ctx.getStringInput("Введите название книги для выдачи: ").toLowerCase();
+    if (bookName.isEmpty()) {
       System.out.println("Название не может быть пустым");
       return;
     }
-    String bookName = ctx.getStringInput("Введите имя читателя, которому выдается книга: ");
-    if (bookName.isEmpty()) {
+    if (!ctx.service().readableEntityExists(bookName)) {
+      System.out.println("Книга не найдена");
+      return;
+    }
+    String name = ctx.getStringInput("Введите имя читателя, которому выдается книга: ")
+        .toLowerCase();
+    if (name.isEmpty()) {
       System.out.println("Имя не может быть пустым");
       return;
     }
-
+    if (!ctx.service().readerExists(name)) {
+      System.out.println("Читатель не найден");
+      return;
+    }
     Optional<LocalDateTime> dueDateOpt = ctx.getDateInput(
         "Введите крайнюю дату возврата (дд.мм.гггг): ");
     LocalDateTime dueDate = dueDateOpt.orElse(null);
+    if (dueDate != null && dueDate.isBefore(LocalDateTime.now())) {
+      System.out.println("Дата возврата не может быть раньше даты выдачи");
+      return;
+    }
     Integer id = ctx.service().giveREntityToReader(name, bookName, dueDate);
     if (id > 0) {
       System.out.println("Книга успешно выдана. id записи = " + id);

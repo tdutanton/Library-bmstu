@@ -30,4 +30,13 @@ public interface LibraryRepository {
 
   Integer giveREntityToReader(String readerName, String rEntityName,
       LocalDateTime borrowed, LocalDateTime dueDate);
+
+  Integer returnREntity(String readerName, String rEntityName,
+      LocalDateTime returned);
+
+  List<ReadableEntity> getBorrowedByReader(String name);
+
+  List<String[]> getTopReadableEntities();
+
+  List<String[]> getBorrowedRE();
 }

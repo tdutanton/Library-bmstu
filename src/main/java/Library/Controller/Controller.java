@@ -6,9 +6,13 @@ import Library.Controller.Command.CommandFactory;
 import Library.Controller.Command.Impl.CreateReadableEntityCommand;
 import Library.Controller.Command.Impl.CreateReaderCommand;
 import Library.Controller.Command.Impl.FindReadableEntity;
+import Library.Controller.Command.Impl.GetBorrowedByReaderCommand;
+import Library.Controller.Command.Impl.GetBorrowedRECommmand;
 import Library.Controller.Command.Impl.GetReadableEntities;
 import Library.Controller.Command.Impl.GetReadersCommand;
+import Library.Controller.Command.Impl.GetTopRECommand;
 import Library.Controller.Command.Impl.GiveREntityCommand;
+import Library.Controller.Command.Impl.ReturnREntityCommand;
 import Library.Service.GeneralService.GeneralService;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,9 +41,10 @@ public class Controller {
     map.put(4, GetReadableEntities::new);
     map.put(5, FindReadableEntity::new);
     map.put(6, GiveREntityCommand::new);
-//    map.put(7, ShowCategoriesCommand::new);
-//    map.put(8, ShowReportCommand::new);
-//    map.put(9, ShowGroupsCommand::new);
+    map.put(7, ReturnREntityCommand::new);
+    map.put(8, GetBorrowedByReaderCommand::new);
+    map.put(9, GetTopRECommand::new);
+    map.put(10, GetBorrowedRECommmand::new);
 
     return map;
   }
@@ -53,10 +58,10 @@ public class Controller {
     System.out.println("4.	Посмотреть список книг");
     System.out.println("5.	Поиск книги по названию");
     System.out.println("6.	Выдать книгу читателю");
-    System.out.println("7.	Показать категории");
-    System.out.println("8.	Аналитика: Подсчет разницы доходов и расходов за выбранный период");
-    System.out.println("9.	Аналитика: Группировка доходов и расходов по категориям");
-    System.out.println("10.	Импорт / экспорт");
+    System.out.println("7.	Вернуть книгу");
+    System.out.println("8.	Список книг читателя");
+    System.out.println("9.	Показать популярные книги");
+    System.out.println("10.	Показать выданные и не возвращенные книги");
     System.out.println("0.	Выход");
   }
 

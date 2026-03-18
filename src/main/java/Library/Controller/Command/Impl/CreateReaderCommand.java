@@ -16,7 +16,7 @@ public class CreateReaderCommand extends BaseCommand {
       System.out.println("Имя не может быть пустым");
       return;
     }
-    String email = ctx.getStringInput("Введите email читателя: ");
+    String email = ctx.getStringInput("Введите email читателя: ").toLowerCase();
     if (email.isEmpty()) {
       System.out.println("email не может быть пустым");
       return;

@@ -56,4 +56,33 @@ public class GeneralService {
         dueDate);
   }
 
+  public Integer returnREntity(String readerName, String rEntityName) {
+    logger.info("Возврат книги");
+    return readableEntityService.returnREntity(readerName, rEntityName, LocalDateTime.now());
+  }
+
+  public boolean readerExists(String name) {
+    logger.info("Проверка на присутствие читателя в репозитории");
+    return readerService.readerExists(name);
+  }
+
+  public boolean readableEntityExists(String name) {
+    logger.info("Проверка на присутствие книги в репозитории");
+    return readableEntityService.readableEntityExists(name);
+  }
+
+  public List<ReadableEntity> getBorrowedByReader(String name) {
+    return readableEntityService.getBorrowedByReader(name);
+  }
+
+  public List<String[]> getTopReadableEntities() {
+    logger.info("Получить популярные книги");
+    return readableEntityService.getTopReadableEntities();
+  }
+
+  public List<String[]> getBorrowedRE() {
+    logger.info("Получить список выданных книг");
+    return readableEntityService.getBorrowedRE();
+  }
+
 }

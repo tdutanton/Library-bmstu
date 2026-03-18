@@ -25,4 +25,8 @@ public class ReaderService {
   public List<Reader> getReaders() {
     return libraryRepository.getReaders();
   }
+
+  public boolean readerExists(String name) {
+    return libraryRepository.readerExistsByName(name);
+  }
 }

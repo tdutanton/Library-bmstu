@@ -16,7 +16,7 @@ public class CreateReadableEntityCommand extends BaseCommand {
       System.out.println("Название не может быть пустым");
       return;
     }
-    String author = ctx.getStringInput("Введите имя автора: ");
+    String author = ctx.getStringInput("Введите имя автора: ").toLowerCase();
     if (author.isEmpty()) {
       System.out.println("Имя автора не может быть пустым");
       return;

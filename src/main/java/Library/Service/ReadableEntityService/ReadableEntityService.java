@@ -38,4 +38,24 @@ public class ReadableEntityService {
     return libraryRepository.giveREntityToReader(readerName, rEntityName, borrowed, dueDate);
   }
 
+  public Integer returnREntity(String readerName, String rEntityName, LocalDateTime returned) {
+    return libraryRepository.returnREntity(readerName, rEntityName, returned);
+  }
+
+  public boolean readableEntityExists(String name) {
+    return libraryRepository.readableEntityExistsByName(name);
+  }
+
+  public List<ReadableEntity> getBorrowedByReader(String name) {
+    return libraryRepository.getBorrowedByReader(name);
+  }
+
+  public List<String[]> getTopReadableEntities() {
+    return libraryRepository.getTopReadableEntities();
+  }
+
+  public List<String[]> getBorrowedRE() {
+    return libraryRepository.getBorrowedRE();
+  }
+
 }
