@@ -168,4 +168,6 @@ java -jar .\executable\Library-bmstu-1.0-SNAPSHOT.jar
                     V7__insert_test_values_readers.sql
                     V8__insert_test_values_books.sql
                     V9__insert_test_values_borrowings.sql
-```
+```  
+
+### Автор: Anton Evgenev. tg: @tdutanton
