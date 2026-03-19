@@ -1,5 +1,8 @@
 package Library.Model.Domain.TextEntity;
 
+/**
+ * Реализация класса с текстовой сущностью для текстовых объектов-значений "Email".
+ */
 public class Email extends TextEntity {
 
   public Email(String name) {

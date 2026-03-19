@@ -8,6 +8,12 @@ import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.Scanner;
 
+/**
+ * Вспомогательный класс-контекст для унифицирования работы с командами
+ *
+ * @param service главный сервис программы
+ * @param scanner сканер для чтения сигналов от устройства ввода (клавиатура)
+ */
 public record CommandContext(
     GeneralService service,
     Scanner scanner

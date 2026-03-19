@@ -13,6 +13,10 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Главный центр (фасад) для аккумулирования методов с разных сервисов для облегчения работы
+ * контроллера - контроллер взаимодействует только с одним сервисом.
+ */
 @Service
 @RequiredArgsConstructor
 public class GeneralService {

@@ -6,6 +6,9 @@ import Library.Model.Domain.TextEntity.Author;
 import Library.Model.Domain.TextEntity.Name;
 import org.springframework.stereotype.Component;
 
+/**
+ * Реализация фабрики читаемых сущностей с параметром
+ */
 @Component
 public class BookFactoryStringParam implements ReadableEntityFactory {
 

@@ -6,6 +6,9 @@ import Library.Model.Domain.TextEntity.Email;
 import Library.Model.Domain.TextEntity.Name;
 import org.springframework.stereotype.Component;
 
+/**
+ * Реализация фабрики читателей с параметром ReaderParam
+ */
 @Component
 public class ReaderFactoryStringParam implements ReaderFactory {
 
