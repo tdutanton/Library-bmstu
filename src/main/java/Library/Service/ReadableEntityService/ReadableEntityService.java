@@ -10,6 +10,10 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Сервис для реализации бизнес-логики с использованием репозитория. Для операций с читаемыми
+ * сущностями и операций, в которых сущности взаимодействуют с читателями.
+ */
 @Service
 @RequiredArgsConstructor
 public class ReadableEntityService {

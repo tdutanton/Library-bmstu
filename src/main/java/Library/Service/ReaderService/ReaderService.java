@@ -8,6 +8,10 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Сервис для реализации бизнес-логики с использованием репозитория Только для операций с
+ * читателями
+ */
 @Service
 @RequiredArgsConstructor
 public class ReaderService {

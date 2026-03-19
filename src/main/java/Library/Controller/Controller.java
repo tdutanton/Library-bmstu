@@ -19,6 +19,10 @@ import java.util.Map;
 import java.util.Scanner;
 import org.springframework.stereotype.Service;
 
+/**
+ * Контроллер - интерактивная часть приложения. Отвечает за взаимодействие с пользователем и
+ * выполнение соответствующих команд от пользователя.
+ */
 @Service
 public class Controller {
 

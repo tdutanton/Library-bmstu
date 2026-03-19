@@ -1,5 +1,8 @@
 package Library.Model.Domain.TextEntity;
 
+/**
+ * Реализация класса с текстовой сущностью для текстовых объектов-значений "Автор".
+ */
 public class Author extends TextEntity {
 
   public Author(String name) {
