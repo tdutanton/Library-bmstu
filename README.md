@@ -25,11 +25,11 @@ Flyway.
 
 ## Технологический стек
 
-Язык: Java 21
-Фреймворк: Spring Boot 3.3.6
-Доступ к данным: Spring JDBC
-СУБД: PostgreSQL (миграции через Flyway)
-Утилиты: Lombok, Gradle
+Язык: Java 21  
+Фреймворк: Spring Boot 3.3.6  
+Доступ к данным: Spring JDBC  
+СУБД: PostgreSQL (миграции через Flyway)  
+Утилиты: Lombok, Gradle  
 
 ## Требования
 
